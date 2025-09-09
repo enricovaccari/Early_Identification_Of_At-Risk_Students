@@ -134,8 +134,31 @@ The chosen prediction horizon is the **end of the first semester**.
 - Semester 1 is the compromise: enough evidence to predict risk, with enough time for universities to act.
 
 ---
-
 ## Data Overview
+
+**Candidate Datasets**
+- **UCI “Predict Students’ Dropout and Academic Success”**  
+  ~4,000 records, tabular format. Includes demographics, family background, academic performance.  
+  Directly aligned with dropout prediction.  
+- **UCI “Student Performance” (Math/Portuguese Grades)**  
+  ~650 records per subject. Focuses on predicting grades, not dropout.  
+  Smaller scale, weaker alignment.  
+- **National Longitudinal Surveys of Youth (NLSY)**  
+  Large-scale U.S. survey data. Rich socio-economic coverage.  
+  Complex to access, preprocessing required, ethical approvals needed.  
+
+**Quick Evaluation Summary** 
+
+| Dataset                                                | Alignment | Scale   | Labeling Cost | Ethics        |
+|--------------------------------------------------------|-----------|---------|---------------|---------------|
+| UCI Dropout/Success                                    | High      | Medium  | Low           | Clean (public)|
+| UCI Student Performance (Math/Portuguese)              | Medium    | Low     | Low           | Clean (public)|
+| National Longitudinal Surveys of Youth (NLSY)          | Medium    | High    | High          | Sensitive (IRB)|  
+
+**Final Decision**
+Use the **UCI Dropout/Success dataset** as the baseline dataset.  
+It is openly available, directly aligned with the framed classification task, and includes enough records per class. Other datasets may be referenced for external validation but are not required for the capstone scope.  
+
 Anticipated data will come from **UCI’s “Predict Students’ Dropout and Academic Success” dataset**, containing records of Portuguese higher education students.  
 Expected **5 V’s**:  
 - **Volume:** ~4,000 student records (manageable for ML pipelines).  
@@ -144,6 +167,18 @@ Expected **5 V’s**:
 - **Veracity:** Reasonably reliable (institutional records), but cultural/context bias is possible.  
 - **Value:** High — predictive insights can reduce dropouts and improve resource allocation.  
 Uncertainties include dataset representativeness across countries and handling missing values.
+
+### Common Pitfalls to Avoid (Dataset Choice)
+
+Before finalizing the dataset, I reviewed potential pitfalls to ensure alignment with the framed problem:  
+
+- **Problem drift** → ✅ Avoided. The dataset directly addresses student dropout, enrolled, and graduate outcomes. I did not reshape the problem to fit the data.  
+- **Hidden multi-label** → ✅ Checked. Labels are mutually exclusive (*Dropout*, *Enrolled*, *Graduate*) and collectively exhaustive.  
+- **Over-aggregation** → ✅ Not an issue. Data is at the individual student level with semester granularity, which is sufficient for the prediction horizon.  
+- **Assumed balance** → ⚠️ Verified. Actual class distribution is *Graduate: 49.9%*, *Dropout: 32.1%*, *Enrolled: 17.9%*. No extreme minorities (<5%), but imbalance will be managed with class weighting or resampling.  
+- **License amnesia** → ✅ Addressed. The dataset is hosted on UCI with clear terms for public research use. License and attribution are documented in this README and PRD.  
+
+The class distribution analysis shows that the dataset is moderately imbalanced: Graduate is the majority class (49.9%), followed by Dropout (32.1%) and Enrolled (17.9%). All classes are well above the 5% threshold, so there are no extreme minority categories. However, the imbalance still matters: a model trained without adjustments could be biased toward predicting the majority outcome (Graduate). To mitigate this, I will monitor performance using class-sensitive metrics such as F1-score and recall for the Dropout and Enrolled classes, and consider class weighting or resampling strategies if needed.
 
 ---
 
@@ -157,6 +192,22 @@ Model interpretability will be prioritized to ensure trust by educators.
 ---
 
 ## Ethics & Compliance
+
+### Ethics Checklist (Dataset Choice)
+
+| Check                                             | Status   | Notes                                                                 |
+|---------------------------------------------------|----------|----------------------------------------------------------------------|
+| Informed consent documented?                      | ⚠️ No     | Institutional records anonymized, but no individual consent provided |
+| Sensitive attributes included?                    | ✅ Yes    | Gender, nationality, parental background (proxies for SES)           |
+| Dataset complies with local privacy laws (GDPR)?  | ✅ Yes    | Treated as pseudonymized data; no special-category attributes         |
+| Risk of ecological or cultural harm?              | ✅ None   | No GPS, wildlife, or culturally sensitive content                    |
+| Personally identifiable information (PII) present?| ✅ None   | Names, faces, or addresses are not included                          |
+| Mitigation strategy in place?                     | ✅ Yes    | Sensitive Attribute Scanner, fairness audits, subgroup testing       |
+
+**Interpretation:**  
+The dataset is broadly compliant, with anonymization in place and no PII.  
+Main ethical risks are **bias through sensitive attributes** (e.g., gender, nationality) and **lack of explicit student consent**. Both will be mitigated by fairness monitoring, optional feature removal, and ensuring predictions are used only for supportive interventions.
+
 
 ### Regulatory & Privacy Constraints
 
