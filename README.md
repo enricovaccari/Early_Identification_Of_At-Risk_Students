@@ -132,3 +132,37 @@ The project will follow a full classification pipeline:
 ## 12. Acknowledgements
 Dataset provided by UCI Machine Learning Repository.  
 Prepared as part of an academic project on data-driven education and sustainability.  
+
+---
+
+## 13. Data Access & Project Structure
+
+### Download Command
+*(Placeholder – update once finalized)*  
+```bash
+# Example (replace with your actual link or script)
+wget <dataset_download_link> -P data/raw/
+```
+
+### If Manaully Placing Files
+# Place your dataset here
+```bash
+/data/raw/students_dropout_data_2009-2019.csv
+/data/raw/students_dropout_data_2009-2019.xlsx
+```
+
+Early_Identification_Of_At-Risk_Students/
+│
+├── data/
+│   ├── raw/                <- Original immutable datasets (CSV, XLSX)
+│   ├── interim/            <- Intermediate data (cleaned, preprocessed)
+│   ├── processed/          <- Final feature sets ready for modeling
+│   └── checksums.txt       <- SHA-256 integrity checks
+│
+├── notebooks/              <- Jupyter notebooks (EDA, modeling, reports)
+├── src/                    <- Source scripts for data cleaning, preprocessing, modeling
+├── docs/                   <- Documentation (PRD, compliance.md, etc.)
+├── visuals/                <- Plots, diagrams, and figures
+├── requirements.txt        <- Python dependencies
+└── README.md
+

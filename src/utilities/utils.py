@@ -72,7 +72,7 @@ def load_dataset(file_path: Union[str, Path]) -> pd.DataFrame:
     suffix = file_path.suffix.lower()
     if suffix == ".csv":
         print("Data loaded correctly!")
-        return pd.read_csv(file_path, sep=";")
+        return pd.read_csv(file_path)
     elif suffix in (".xlsx", ".xls"):
         return pd.read_excel(file_path)
     else:
@@ -203,5 +203,49 @@ def fuzzy_scan(columns, keywords, cutoff=0.7):
         if close:
             matches[kw] = close
     return matches
+
+# -------------------------------------------------------------------
+
+def make_json_safe(obj):
+    """Convert numpy types to native Python types for JSON serialization."""
+    if isinstance(obj, np.integer):
+        return int(obj)
+    if isinstance(obj, np.floating):
+        return float(obj)
+    if isinstance(obj, (np.bool_, bool)):
+        return bool(obj)
+    if isinstance(obj, dict):
+        return {k: make_json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple, np.ndarray)):
+        return [make_json_safe(x) for x in obj]
+    return obj
+
+# -------------------------------------------------------------------
+
+def detect_variable_types(df, target_col=None):
+    """Automatically detect variable types in a DataFrame"""
+    types = {}
+    
+    for col in df.columns:
+        if col == target_col:
+            types[col] = 'target'
+        elif pd.api.types.is_datetime64_any_dtype(df[col]):
+            types[col] = 'datetime'
+        elif pd.api.types.is_numeric_dtype(df[col]):
+            if df[col].nunique() == 2:
+                types[col] = 'binary'
+            else:
+                types[col] = 'numerical'
+        elif df[col].nunique() < 20:  # Threshold for categorical*
+            types[col] = 'categorical'
+        elif df[col].dtype == 'object':
+            # Check if it's text (long strings) or categorical*
+            avg_length = df[col].astype(str).str.len().mean()
+            if avg_length > 50:
+                types[col] = 'text'
+            else:
+                types[col] = 'categorical'
+    
+    return types
 
 # -------------------------------------------------------------------

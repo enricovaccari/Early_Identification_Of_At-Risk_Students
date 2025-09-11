@@ -2,7 +2,7 @@
 
 | Feature Name                                   | Type    |   Missing Values (%) | Unique Values   |
 |:-----------------------------------------------|:--------|---------------------:|:----------------|
-| Marital status                                 | int64   |                    0 | 6               |
+| Marital Status                                 | int64   |                    0 | 6               |
 | Application mode                               | int64   |                    0 | 18              |
 | Application order                              | int64   |                    0 | 8               |
 | Course                                         | int64   |                    0 | 17              |
