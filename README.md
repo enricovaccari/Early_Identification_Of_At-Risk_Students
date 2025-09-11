@@ -147,8 +147,29 @@ wget <dataset_download_link> -P data/raw/
 ### If Manaully Placing Files
 # Place your dataset here
 ```bash
-/data/raw/students_dropout_data_2009-2019.csv
-/data/raw/students_dropout_data_2009-2019.xlsx
+/data/raw/student_dropout_success.csv
+```
+
+### Install the ucimlrepo package
+```bash
+pip install ucimlrepo
+```
+
+```Python
+from ucimlrepo import fetch_ucirepo 
+  
+# fetch dataset 
+predict_students_dropout_and_academic_success = fetch_ucirepo(id=697) 
+  
+# data (as pandas dataframes) 
+X = predict_students_dropout_and_academic_success.data.features 
+y = predict_students_dropout_and_academic_success.data.targets 
+  
+# metadata 
+print(predict_students_dropout_and_academic_success.metadata) 
+  
+# variable information 
+print(predict_students_dropout_and_academic_success.variables) 
 ```
 
 Early_Identification_Of_At-Risk_Students/
